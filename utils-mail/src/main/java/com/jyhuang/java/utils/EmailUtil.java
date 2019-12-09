@@ -138,7 +138,7 @@ public class EmailUtil {
             String bcc, List<File> fileList) throws Exception {
         Message msg = createMessage(subject, content, to, RecipientType.CC, cc, fileList);
         msg.setRecipients(RecipientType.BCC, InternetAddress.parse(bcc));
-        msg.setSentDate(new Date());     //设置信件头的发送日期
+        msg.setSentDate(new Date()); // 设置信件头的发送日期
 
         return msg;
     }
@@ -178,11 +178,12 @@ public class EmailUtil {
         //邮件内容
         Multipart mp = createMultipart(content, fileList);
         Message msg = new MimeMessage(createSession());
-        msg.setFrom(new InternetAddress(EmailConfig.getFrom()));
-        msg.setSubject(subject);
+        msg.setFrom(new InternetAddress(EmailConfig.getFrom(),
+                MimeUtility.encodeText("系统管理员", MimeUtility.mimeCharset("gb2312"), null)));
+        msg.setSubject(MimeUtility.encodeText(subject, MimeUtility.mimeCharset("gb2312"), null));
         msg.setRecipients(RecipientType.TO, InternetAddress.parse(to));
-        msg.setContent(mp); //Multipart加入到信件  
-        msg.setSentDate(new Date());     //设置信件头的发送日期
+        msg.setContent(mp); // Multipart加入到信件
+        msg.setSentDate(new Date());     // 设置信件头的发送日期
 
         return msg;
     }
@@ -198,20 +199,20 @@ public class EmailUtil {
      */
     private static Multipart createMultipart(String content, List<File> fileList)
             throws MessagingException, UnsupportedEncodingException {
-        //邮件内容
+        // 邮件内容
         Multipart mp = new MimeMultipart();
         MimeBodyPart mbp = new MimeBodyPart();
         mbp.setContent(content, "text/html;charset=gb2312");
         mp.addBodyPart(mbp);
 
         if (fileList != null && fileList.size() > 0) {
-            //附件
+            // 附件
             FileDataSource fds;
             for (File file : fileList) {
                 mbp = new MimeBodyPart();
-                fds = new FileDataSource(file);//得到数据源  
-                mbp.setDataHandler(new DataHandler(fds)); //得到附件本身并至入BodyPart  
-                mbp.setFileName(MimeUtility.encodeText(file.getName()));  //得到文件名同样至入BodyPart  
+                fds = new FileDataSource(file); // 得到数据源
+                mbp.setDataHandler(new DataHandler(fds)); // 得到附件本身并至入BodyPart
+                mbp.setFileName(MimeUtility.encodeText(file.getName()));  // 得到文件名同样至入BodyPart
                 mp.addBodyPart(mbp);
             }
         }
@@ -223,7 +224,6 @@ public class EmailUtil {
      * @param subject  邮件标题
      * @param content  邮件正文
      * @param fileList 邮件附件
-     *                 void
      *
      * @throws Exception
      */

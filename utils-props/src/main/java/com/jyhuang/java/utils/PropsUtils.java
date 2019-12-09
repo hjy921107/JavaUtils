@@ -8,10 +8,10 @@ public class PropsUtils {
 
     private static Properties config = null;
 
-    private static void readAllProperties(String fileurl) {
+    private static void readAllProperties(String fileUrl) {
         config = new Properties();
         try {
-            InputStream in = PropsUtils.class.getResourceAsStream(fileurl);
+            InputStream in = PropsUtils.class.getResourceAsStream(fileUrl);
             config.load(in);
             in.close();
         } catch (IOException e) {
@@ -19,10 +19,10 @@ public class PropsUtils {
         }
     }
 
-    public static String getProperties(String fileurl, String key) {
+    public static String getProperties(String fileUrl, String key) {
         if (null == config) {
             System.out.println("----------获取配置文件信息开始---------");
-            readAllProperties(fileurl);
+            readAllProperties(fileUrl);
             System.out.println("----------获取配置文件信息结束---------");
         }
         return config.getProperty(key);

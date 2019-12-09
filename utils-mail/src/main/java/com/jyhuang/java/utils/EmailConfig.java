@@ -6,10 +6,12 @@ import java.util.Properties;
 
 public class EmailConfig {
     private static final String MAIL_DEBUT = "mail.debug";
-    private static final String MAIL_SMTP_AUTH = "mail.smtp.auth";
-    private static final String MAIL_SMTP_PORT = "mail.smtp.port";
+    private static final String MAIL_AUTH = "mail.smtp.auth";
+    private static final String MAIL_PORT = "mail.smtp.port";
     private static final String MAIL_HOST = "mail.host";
     private static final String MAIL_TRANSPORT_PROTOCOL = "mail.transport.protocol";
+    private static final String MAIL_SSL_IS_OPEN = "mail.ssl.isOpen";
+    private static final String MAIL_ENCRYPTION_METHOD = "mail.encryption.method";
     private static final String MAIL_USER = "mail.user";
     private static final String MAIL_PASS = "mail.pass";
     private static final String MAIL_FROM = "mail.from";
@@ -31,6 +33,12 @@ public class EmailConfig {
     //发送邮件协议名称
     private static String protocol;
 
+    //邮件是否开启 SSL 加密
+    private static String sslIsOpen;
+
+    //邮件加密方式
+    private static String encryptMethod;
+
     //发送邮件用户名
     private static String user;
 
@@ -48,36 +56,66 @@ public class EmailConfig {
 
     private EmailConfig() {
         try {
-            EmailConfig.auth = PropsUtils.getProperties(EmailConfig.MAIL_SMTP_AUTH);
-            EmailConfig.port = PropsUtils.getProperties(EmailConfig.MAIL_SMTP_PORT);
+            EmailConfig.auth = PropsUtils.getProperties(EmailConfig.MAIL_AUTH);
+            EmailConfig.port = PropsUtils.getProperties(EmailConfig.MAIL_PORT);
             EmailConfig.debug = PropsUtils.getProperties(EmailConfig.MAIL_DEBUT);
             EmailConfig.from = PropsUtils.getProperties(EmailConfig.MAIL_FROM);
             EmailConfig.host = PropsUtils.getProperties(EmailConfig.MAIL_HOST);
             EmailConfig.pass = PropsUtils.getProperties(EmailConfig.MAIL_PASS);
             EmailConfig.protocol = PropsUtils.getProperties(EmailConfig.MAIL_TRANSPORT_PROTOCOL);
+            EmailConfig.sslIsOpen = PropsUtils.getProperties(EmailConfig.MAIL_SSL_IS_OPEN);
+            EmailConfig.encryptMethod = PropsUtils
+                    .getProperties(EmailConfig.MAIL_ENCRYPTION_METHOD);
             EmailConfig.user = PropsUtils.getProperties(EmailConfig.MAIL_USER);
 
-            sessionProperties.setProperty(EmailConfig.MAIL_SMTP_AUTH, EmailConfig.auth);
-            sessionProperties.setProperty(EmailConfig.MAIL_SMTP_PORT, EmailConfig.port);
+            sessionProperties.setProperty(EmailConfig.MAIL_AUTH, EmailConfig.auth);
+            sessionProperties.setProperty(EmailConfig.MAIL_PORT, EmailConfig.port);
             sessionProperties.setProperty(EmailConfig.MAIL_DEBUT, EmailConfig.debug);
             sessionProperties.setProperty(EmailConfig.MAIL_HOST, EmailConfig.host);
             sessionProperties
                     .setProperty(EmailConfig.MAIL_TRANSPORT_PROTOCOL, EmailConfig.protocol);
+            // sessionProperties
+            //         .setProperty(EmailConfig.MAIL_ENCRYPTION_METHOD, EmailConfig.encryptMethod);
             sessionProperties.setProperty(EmailConfig.MAIL_USER, EmailConfig.user);
             sessionProperties.setProperty(EmailConfig.MAIL_PASS, EmailConfig.pass);
 
-            // -------------------- 配置 SSL（可将下面的 prop 写入到配置文件） --------------------
-            sessionProperties.put("mail.smtp.ssl.enable", "true"); // 开启 ssl（必须），注意端口
-            // 下面配置二选一即可（对于使用纯配置（不引入 MailSSLSocketFactory），可以使用方法二）
-            // 方法一：
-            // MailSSLSocketFactory sf = new MailSSLSocketFactory();
-            // 信任所有 host，或者指定 host
-            // sf.setTrustAllHosts(true); or sf.setTrustedHosts(new String[] { "my-server" });
-            // sessionProperties.put("mail.smtp.ssl.socketFactory", sf);
-            // 方法二：
-            sessionProperties.put("mail.smtp.ssl.checkserveridentity", true);
+            if ("1".equals(EmailConfig.sslIsOpen)) { // 开启 SSL 加密
+                // --------------------------------- 配置 SSL/TLS ----------------------------------
+                if ("SSL".equals(EmailConfig.encryptMethod)) { // 开启 ssl 必须配置，注意对应端口配置
+                    sessionProperties.put("mail.smtp.ssl.enable", "true");
+                } else if ("TLS".equals(EmailConfig.encryptMethod)) { // 开启 tls 必须配置，注意对应端口配置
+                    sessionProperties.put("mail.smtp.starttls.enable", "true");
+                    // sessionProperties.put("mail.smtp.socketFactory.fallback", "true");
+                } else {
+                    logger.error("邮箱加密方式配置不正确，目前仅支持 SSL、TLS，请确认！");
+                    throw new Exception("邮箱加密方式配置不正确，目前仅支持 SSL、TLS，请确认！");
+                }
+
+                // 下面配置三选一即可（对于使用纯配置（不引入 MailSSLSocketFactory 对象），可以使用方法二、三）
+
+                // 方法一：
+                // MailSSLSocketFactory sf = new MailSSLSocketFactory();
+
+                // 信任所有 host
+                // sf.setTrustAllHosts(true);
+                // 或者指定 host
+                // sf.setTrustedHosts(new String[] { "my-server" });
+
+                // sessionProperties.put("mail.smtp.ssl.socketFactory", sf);
+
+                // 方法二：
+                // 与方法一类似，直接使用类名配置 socketFactory
+                // sessionProperties.put("mail.smtp.ssl.socketFactory", "javax.net.ssl.SSLSocketFactory");
+
+                // 方法三：
+                sessionProperties.put("mail.smtp.ssl.checkserveridentity", true);
+            } else { // 非 SSL 加密
+                // ---------------------------------- NO SSL/TLS ---------------------------------------
+                // 无须配置上面关于 SSL/TSL 部分内容
+            }
         } catch (Exception e) {
             logger.error("邮箱配置信息初始化异常", e);
+            throw new RuntimeException("邮箱配置信息初始化异常");
         }
     }
 

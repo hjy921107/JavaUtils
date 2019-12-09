@@ -5,7 +5,7 @@ import javax.mail.PasswordAuthentication;
 
 
 public class EmailAuthenticator extends Authenticator {
-    //创建单例邮件账户信息
+    // 创建单例邮件账户信息
     private static EmailAuthenticator emailAuthenticator = new EmailAuthenticator();
 
     private EmailAuthenticator() {

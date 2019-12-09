@@ -5,34 +5,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.jyhuang</groupId>
-    <artifactId>utils-mail</artifactId>
+    <artifactId>utils-compress</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-    <properties>
-        <spring.version>4.3.2.RELEASE</spring.version>
-    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
+            <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <version>1.4.7</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jyhuang</groupId>
-            <artifactId>utils-props</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.29</version>
         </dependency>
     </dependencies>
 

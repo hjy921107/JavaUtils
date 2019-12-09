@@ -5,34 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.jyhuang</groupId>
-    <artifactId>utils-mail</artifactId>
+    <artifactId>utils-json</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-    <properties>
-        <spring.version>4.3.2.RELEASE</spring.version>
-    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <version>1.4.7</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jyhuang</groupId>
-            <artifactId>utils-props</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.10.1</version>
         </dependency>
     </dependencies>
 
@@ -49,5 +29,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
